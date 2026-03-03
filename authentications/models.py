@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin
 from django.conf import settings
 import uuid
+from django.utils import timezone
+from datetime import timedelta
+
+
 
 class CustomUserManager(BaseUserManager):
 
@@ -34,11 +38,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser,PermissionsMixin):
-    ROLES=[
-        ('user','User'),
-        ('admin','Admin'),
-
-    ]
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     email=models.EmailField(unique=True)
     is_staff=models.BooleanField(default=False)
     is_active=models.BooleanField(default=True)
@@ -60,17 +60,8 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
 
 
 class Profile(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False
-    )
-
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='profile'
-    )
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='profile')
 
     # Basic Info
     first_name = models.CharField(max_length=20)
@@ -82,11 +73,7 @@ class Profile(models.Model):
     bio = models.TextField(blank=True)
 
     # Profile Media
-    profile_picture = models.ImageField(
-        upload_to='profiles/',
-        blank=True,
-        null=True
-    )
+    profile_picture = models.ImageField(upload_to='profiles/',blank=True,null=True)
 
     # Address Info
     address = models.CharField(max_length=255, blank=True)
@@ -104,3 +91,27 @@ class Profile(models.Model):
         return f"{self.user.email}'s Profile"
     
 
+
+
+
+class OTP(models.Model):
+    PURPOSE_CHOICES = [
+        ('email_verify', 'Email Verify'),
+        ('password_reset', 'Password Reset'),
+        ('login', 'Login OTP'),
+    ]
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='otps')
+    purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES)
+    code = models.CharField(max_length=6)
+    is_used = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def is_expired(self):
+        return timezone.now() > self.created_at + timedelta(minutes=5)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.code}"

@@ -8,14 +8,13 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
     # List page
-    list_display = ('email', 'role','date_joined', 'is_staff', 'is_active')
-    list_filter = ('role', 'is_staff', 'is_active')
+    list_display = ('email','date_joined', 'is_staff', 'is_active')
+    list_filter = ( 'is_staff', 'is_active')
     readonly_fields = ('date_joined',) 
 
     # Detail/Edit page
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('role',)}),
         ('Permissions', {
             'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions'),
         }),
@@ -26,7 +25,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'role', 'password1', 'password2', 'is_staff', 'is_active'),
+            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active'),
         }),
     )
 
