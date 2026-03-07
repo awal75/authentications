@@ -33,3 +33,22 @@ class UserCreateSerializer(serializers.ModelSerializer):
             )
 
             return user
+        
+class SimpleUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields=['id','email']
+    
+class ProfileSerilizer(serializers.ModelSerializer):
+    user=SimpleUserSerializer(read_only=True)
+    class Meta:
+        model=models.Profile
+        fields=['id','user','first_name','last_name','phone','date_of_birth','bio','profile_picture','address','city','country','is_verified','created_at','updated_at']
+
+
+class ProfileUpdateSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model=models.Profile
+        fields=['id','first_name','last_name','phone','date_of_birth','bio','profile_picture','address','city','country','is_verified','created_at','updated_at']
+
+
