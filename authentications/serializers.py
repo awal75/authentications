@@ -1,5 +1,5 @@
 from rest_framework import serializers
-import models
+from . import models
 from django.conf import settings
 from django.db import transaction
 from django.contrib.auth import get_user_model
