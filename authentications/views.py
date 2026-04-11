@@ -4,6 +4,7 @@ from .serializers import UserCreateSerializer,ProfileSerilizer,ProfileUpdateSeri
 from django.contrib.auth import get_user_model
 from .models import Profile
 from rest_framework import permissions
+from rest_framework.generics import CreateAPIView
 User=get_user_model()
 
 class UserModelViewSet(ModelViewSet):
@@ -14,7 +15,7 @@ class UserModelViewSet(ModelViewSet):
             return [permissions.AllowAny]
         elif self.action=='list':
             return [permissions.IsAdminUser]
-        return [permissions.IsAdminUser]
+        return [permissions.IsAuthenticated]
 
 class ProfileModelViewSet(ModelViewSet):
     queryset=Profile.objects.all()
@@ -23,3 +24,8 @@ class ProfileModelViewSet(ModelViewSet):
         if self.action=='update':
             return ProfileUpdateSerilizer
         return ProfileSerilizer
+    
+
+class JwtCreate(CreateAPIView):
+    permission_classes=[permissions.AllowAny]
+    serializer_class=serial

@@ -3,6 +3,7 @@ from . import models
 from django.conf import settings
 from django.db import transaction
 from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate
 
 User=User = get_user_model()
 
@@ -51,4 +52,18 @@ class ProfileUpdateSerilizer(serializers.ModelSerializer):
         model=models.Profile
         fields=['id','first_name','last_name','phone','date_of_birth','bio','profile_picture','address','city','country','is_verified','created_at','updated_at']
 
+
+class JwtSerialzer(serializers.Serializer):
+    email=serializers.EmailField()
+    password=serializers.CharField()
+
+    def validate(self, attrs):
+        email=attrs['email']
+        password=attrs['password']
+        request=self.context['request']
+
+        user=authenticate(request=request,email=email,password=password)
+        if not user:
+            return []
+        return user
 
