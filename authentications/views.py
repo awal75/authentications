@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from .models import Profile
 from rest_framework import permissions
 from rest_framework.generics import CreateAPIView
+from .serializers import JwtSerialzer
 User=get_user_model()
 
 class UserModelViewSet(ModelViewSet):
@@ -28,4 +29,6 @@ class ProfileModelViewSet(ModelViewSet):
 
 class JwtCreate(CreateAPIView):
     permission_classes=[permissions.AllowAny]
-    serializer_class=serial
+    serializer_class=JwtSerialzer
+
+    

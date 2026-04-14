@@ -66,4 +66,7 @@ class JwtSerialzer(serializers.Serializer):
         if not user:
             return []
         return user
+    
+    def create(self, validated_data):
+        pass
 
